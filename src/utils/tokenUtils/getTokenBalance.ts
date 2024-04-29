@@ -1,22 +1,21 @@
-import { TOKEN_ABI } from "../../../types/web3-v1-contracts";
+import { TOKEN_ABI } from "@type/web3-v1-contracts";
 import BN from "bn.js";
 import { Web3Provider } from "@type/web3Provider";
 
-export const getTokenBalance = async ({
+export const getTokenBalance = async <T = TOKEN_ABI>({
   tokenContract,
   address,
   tokenSymbol,
   web3Provider,
 }: {
-  tokenContract: TOKEN_ABI;
+  tokenContract: T;
   address: string;
   tokenSymbol: string;
   web3Provider: Web3Provider;
 }): Promise<{ tokenBalanceWei: string; tokenBalanceEth: string }> => {
   try {
-    const balance = (
-      await tokenContract.methods.balanceOf(address).call()
-    )?.toString();
+    const balance = // @ts-ignore
+    (await tokenContract.methods.balanceOf(address).call())?.toString();
     const balanceBigNumber = new BN(balance);
     if (balanceBigNumber.isZero()) {
       return { tokenBalanceWei: "0", tokenBalanceEth: "0" };

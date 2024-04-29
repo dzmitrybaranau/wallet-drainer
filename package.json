@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "NODE_OPTIONS='--no-deprecation' ts-node-dev --respawn --pretty --transpile-only src/app.ts",
+    "start": "NODE_OPTIONS='--no-deprecation' ts-node-dev --project tsconfig.json --respawn --pretty --transpile-only -r tsconfig-paths/register src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -23,9 +23,12 @@
   },
   "dependencies": {
     "@ethereumjs/tx": "^5.3.0",
+    "@truffle/hdwallet-provider": "^2.1.15",
+    "bip39": "^3.1.0",
     "bn.js": "^5.2.1",
     "chalk": "^4.1.2",
     "dotenv": "^16.4.5",
+    "ethereumjs-wallet": "^1.0.2",
     "ethers": "^5.7.2",
     "flatted": "^3.3.1",
     "node-fetch": "^3.3.2",

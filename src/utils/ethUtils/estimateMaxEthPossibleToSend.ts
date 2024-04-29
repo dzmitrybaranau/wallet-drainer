@@ -1,8 +1,7 @@
 import { Web3Provider } from "@type/web3Provider";
 import { Web3BaseWalletAccount } from "web3";
 import BN from "bn.js";
-import { getEthBalance } from "../../chains/eth/eth_chain";
-import { estimateEthTransferFee } from "./index";
+import { estimateEthTransferFee, getEthBalance } from "./index";
 
 export const estimateMaxEthPossibleToSend = async ({
   from,
@@ -10,7 +9,7 @@ export const estimateMaxEthPossibleToSend = async ({
   to,
   gasPriceWei,
 }: {
-  web3Provider: Web3ProviderType;
+  web3Provider: Web3Provider;
   from: Web3BaseWalletAccount;
   to: Web3BaseWalletAccount;
   gasPriceWei?: bigint;

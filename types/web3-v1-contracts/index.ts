@@ -3,5 +3,10 @@
 /* eslint-disable */
 import type * as merkly from "./Merkly";
 export type { merkly };
+export type { EarlyZerolend } from "./EarlyZerolend";
+export type { InitializableImmutableAdminUpgradeabilityProxyAbi } from "./InitializableImmutableAdminUpgradeabilityProxyAbi";
 export type { NFT_ABI } from "./NFT_ABI";
+export type { PoolAddressesProviderAbi } from "./PoolAddressesProviderAbi";
 export type { TOKEN_ABI } from "./TOKEN_ABI";
+export type { UiIncentiveDataProviderV3ABI } from "./UiIncentiveDataProviderV3ABI";
+export type { WalletBalanceProviderABI } from "./WalletBalanceProviderABI";

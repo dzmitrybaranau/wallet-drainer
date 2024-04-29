@@ -1,4 +1,11 @@
+export const zkSyncClaimIncentivesProxy = {
+  address: "0x54AB34aB3C723bD2674c7082aA6fFcdfd3A5BEdc",
+};
 export const zkSyncTokensMetadataObject = {
+  earlyZERO: {
+    address: "0x9793eac2fECef55248efA039BEC78e82aC01CB2f",
+    symbol: "ezrlyZERO",
+  },
   FRAX: {
     address: "0xb4c1544cb4163f4c2eca1ae9ce999f63892d912a",
   },

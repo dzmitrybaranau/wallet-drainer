@@ -49,7 +49,7 @@ export const estimateTokenTransfer = async ({
       estimatedGasWei,
     };
   } catch (e) {
-    console.log("ERROR: estimateZkPepeTransferFromDrainToMaster", e);
-    throw new Error("estimateZkPepeTransferFromDrainToMaster()");
+    console.log("ERROR: estimateTokenTransfer", e);
+    throw new Error("estimateTokenTransfer()");
   }
 };

@@ -1,6 +1,6 @@
 import { Web3BaseWalletAccount } from "web3";
 import { Web3Provider } from "@type/web3Provider";
-import {getTokenBalance, getTokenContract} from "@utils/tokenUtils";
+import {getTokenBalance, getSmartContract} from "@utils/tokenUtils";
 
 export const checkTokens = async ({
   tokensArray,
@@ -13,7 +13,7 @@ export const checkTokens = async ({
 }) => {
   console.log("START");
   for (const zkSyncToken of tokensArray) {
-    const tokenContract = getTokenContract({
+    const tokenContract = getSmartContract({
       contractAddress: zkSyncToken.address,
       web3Provider,
     });
