@@ -71,9 +71,11 @@ export async function sendEth({
     const signedTransaction = await from.signTransaction(tx);
 
     // No need to wait for receipt since we need to outperform the other bots
-    await web3Provider.eth.sendSignedTransaction(
+    const receipt = await web3Provider.eth.sendSignedTransaction(
       signedTransaction.rawTransaction,
     );
+
+    console.log({ receipt });
     console.log(
       `Sent ${web3Provider.utils.fromWei(valueInWei, "ether")} ETH from ${from.address} to ${to.address}`,
     );

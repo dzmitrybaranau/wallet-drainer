@@ -26,7 +26,7 @@ export const getTransferTokenBatchRequest = async ({
       data: encodedTransferData,
       gas: estimatedGasWei,
       gasPrice: gasPriceWei,
-      nonce: nonce,
+      nonce: fromWalletNonce,
     };
 
     // TODO: Check if I can sign transcation before sending ETH to Drain Wallet

@@ -3,7 +3,8 @@ import { Web3Provider } from "@type/web3Provider";
 import EarlyZerolendAbiJson from "../contracts/EarlyZerolend.json";
 import BN from "bn.js";
 import {
-  estimateMaxEthPossibleToSend, getEthBalance,
+  estimateMaxEthPossibleToSend,
+  getEthBalance,
   getSendEthBatch,
   sendEth,
 } from "@utils/ethUtils";
@@ -50,6 +51,10 @@ export async function drainToken({
       tokenBalanceWei,
       tokenBalanceEth,
     });
+    if (Number(tokenBalanceWei) === 0) {
+      console.log("Token balance is 0");
+      return;
+    }
 
     // Get gas fee to drain token
     const {
@@ -71,10 +76,12 @@ export async function drainToken({
     });
 
     // Get drain wallet balance to estimate how much need to send for drain
-    const { ethBalanceWei: drainWalletBalanceWei } = await getEthBalance({
-      address: drainWallet.address,
-      web3Provider,
-    });
+    const { ethBalanceWei: drainWalletBalanceWei, ethBalanceEth } =
+      await getEthBalance({
+        address: drainWallet.address,
+        web3Provider,
+      });
+    console.log({ drainWalletBalanceWei, ethBalanceEth });
 
     let drainWalletNonce = await web3Provider.eth.getTransactionCount(
       drainWallet.address,
@@ -82,7 +89,10 @@ export async function drainToken({
 
     // Drain if enough balance
     if (
-      new BN(drainWalletBalanceWei).gt(new BN(calculatedTokenTransferGasFeeWei))
+      new BN(drainWalletBalanceWei).gt(
+        new BN(calculatedTokenTransferGasFeeWei),
+      ) ||
+      new BN(drainWalletBalanceWei).eq(new BN(calculatedTokenTransferGasFeeWei))
     ) {
       console.log("Drain wallet has enough eth to make the transfer");
       const encodedTransferData = tokenContract.methods
@@ -107,12 +117,13 @@ export async function drainToken({
     const ethToSendToDrainWalletWei = new BN(calculatedTokenTransferGasFeeWei)
       .sub(new BN(drainWalletBalanceWei))
       .toString();
+
     const ethToSend = web3Provider.utils.fromWei(
       ethToSendToDrainWalletWei,
       "ether",
     );
 
-    const encodedTransferData = tokenContract.methods
+    const encodedTokenTransferData = tokenContract.methods
       .transfer(masterWallet.address, tokenBalanceWei)
       .encodeABI();
 
@@ -123,15 +134,39 @@ export async function drainToken({
       valueETH: ethToSend,
     });
 
-    await getTransferTokenBatchRequest({
-      from: drainWallet,
-      tokenContract,
-      gasPriceWei,
-      estimatedGasWei,
-      encodedTransferData,
-      fromWalletNonce: drainWalletNonce,
-    });
+    const { transferTokenJsonRpcBatchRequest } =
+      await getTransferTokenBatchRequest({
+        from: drainWallet,
+        tokenContract,
+        gasPriceWei,
+        estimatedGasWei,
+        encodedTransferData: encodedTokenTransferData,
+        fromWalletNonce: drainWalletNonce,
+      });
     drainWalletNonce += BigInt(1);
+    batch
+      .add(transferTokenJsonRpcBatchRequest)
+      .then(() => {
+        console.log(`Sent ${tokenSymbol} to Master`);
+      })
+      .catch(() => {
+        const encodedTransferData = tokenContract.methods
+          .transfer(masterWallet.address, tokenBalanceWei)
+          .encodeABI();
+        transferTokenFast({
+          to: masterWallet,
+          from: drainWallet,
+          amountWei: tokenBalanceWei,
+          tokenContract,
+          web3Provider,
+          gasPriceWei,
+          estimatedGasWei,
+          nonce: drainWalletNonce,
+          encodedTransferData,
+          tokenSymbol,
+        });
+        console.log("Error in batch.add(transferTokenJsonRpcBatchRequest)");
+      });
 
     // Send back rest of ETH
     const { maxTransferableEth, maxTransferableWei } =

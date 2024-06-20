@@ -9,7 +9,7 @@ export async function getSendEthBatch({
   estimatedGasWei,
 }: {
   from: Web3BaseWalletAccount;
-  valueWei: string | "MAX";
+  valueWei: string;
   to: Web3BaseWalletAccount;
   fromWalletNonce: bigint;
   gasPriceWei: bigint;
